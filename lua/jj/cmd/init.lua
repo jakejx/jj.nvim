@@ -85,6 +85,8 @@ local split_module = require("jj.cmd.split")
 --- @class jj.cmd.status.keymaps
 --- @field open_file? string|string[] Keymaps for the status command buffer, setting a keymap to nil will disable it
 --- @field restore_file? string|string[]
+--- @field track_file? string|string[]
+--- @field untrack_file? string|string[]
 
 --- @class jj.cmd.floating.keymaps The floating buffer is the one shown when diffing from the log buffer
 --- @field close? string|string[] Keymaps to close the floating buffer
@@ -200,6 +202,8 @@ M.config = {
 		status = {
 			open_file = "<CR>",
 			restore_file = "<S-x>",
+			track_file = "t",
+			untrack_file = "u",
 		},
 		close = { "q", "<Esc>" },
 		floating = {

@@ -570,6 +570,8 @@ revision via `jj diffedit`. Immutable revisions show an error on write.
       status = {
         open_file = "<CR>",                 -- Open file under cursor
         restore_file = "<S-x>",             -- Restore file under cursor
+        track_file = "t",                   -- Track file under cursor
+        untrack_file = "u",                 -- Untrack file under cursor
       },
       -- Close keymaps (shared across all buffers)
       close = { "q", "<Esc>" },
@@ -1055,6 +1057,8 @@ vim.keymap.set("n", "<leader>jA", annotate.line, { desc = "JJ annotate line" })
           status = {
             open_file = "<CR>",
             restore_file = "<S-x>",
+            track_file = "t",
+            untrack_file = "u",
           },
           close = { "q", "<Esc>" },
         },

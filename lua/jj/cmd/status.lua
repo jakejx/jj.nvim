@@ -42,6 +42,58 @@ function M.handle_status_restore()
 	end
 end
 
+--- Build the command to track a file from the jj status buffer
+--- @param file_info {old_path : string, new_path : string, is_rename : boolean}|nil
+--- @return string|nil
+function M.build_status_track_command(file_info)
+	if not file_info then
+		return nil
+	end
+
+	return "jj file track " .. vim.fn.shellescape(file_info.new_path)
+end
+
+--- Handle tracking an untracked file from the jj status buffer
+function M.handle_status_track()
+	local file_info = parser.parse_file_info_from_status_line(vim.api.nvim_get_current_line())
+	local track_cmd = M.build_status_track_command(file_info)
+	if not track_cmd or not file_info then
+		return
+	end
+
+	local _, success = runner.execute_command(track_cmd, "Failed to track file")
+	if success then
+		utils.notify("Tracked: " .. file_info.new_path, vim.log.levels.INFO)
+		require("jj.cmd").status()
+	end
+end
+
+--- Build the command to untrack a file from the jj status buffer
+--- @param file_info {old_path : string, new_path : string, is_rename : boolean}|nil
+--- @return string|nil
+function M.build_status_untrack_command(file_info)
+	if not file_info then
+		return nil
+	end
+
+	return "jj file untrack " .. vim.fn.shellescape(file_info.new_path)
+end
+
+--- Handle untracking a file from the jj status buffer
+function M.handle_status_untrack()
+	local file_info = parser.parse_file_info_from_status_line(vim.api.nvim_get_current_line())
+	local untrack_cmd = M.build_status_untrack_command(file_info)
+	if not untrack_cmd or not file_info then
+		return
+	end
+
+	local _, success = runner.execute_command(untrack_cmd, "Failed to untrack file")
+	if success then
+		utils.notify("Untracked: " .. file_info.new_path, vim.log.levels.INFO)
+		require("jj.cmd").status()
+	end
+end
+
 --- Handle opening a file from the jj status buffer
 function M.handle_status_enter()
 	local file_info = parser.parse_file_info_from_status_line(vim.api.nvim_get_current_line())
@@ -81,6 +133,14 @@ function M.status_keymaps()
 		restore_file = {
 			desc = "Restore file under cursor",
 			handler = M.handle_status_restore,
+		},
+		track_file = {
+			desc = "Track file under cursor",
+			handler = M.handle_status_track,
+		},
+		untrack_file = {
+			desc = "Untrack file under cursor",
+			handler = M.handle_status_untrack,
 		},
 	}
 

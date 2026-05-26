@@ -8,6 +8,7 @@ package.path = package.path .. ";lua/?.lua;lua/?/init.lua"
 
 -- Load the parser module
 local parser = require("jj.core.parser")
+local status = require("jj.cmd.status")
 
 local utils = require("jj.utils")
 
@@ -215,6 +216,16 @@ end)
 run_test("parses with bottom-right corner ┘", function()
 	local line = "┘ ◆ def234 bottom right corner"
 	assert_equals("def234", parser.get_revset(line))
+end)
+
+run_test("builds track command for status file info", function()
+	local file_info = parser.parse_file_info_from_status_line("? untracked file.txt")
+	assert_equals("jj file track 'untracked file.txt'", status.build_status_track_command(file_info))
+end)
+
+run_test("builds untrack command for status file info", function()
+	local file_info = parser.parse_file_info_from_status_line("A tracked file.txt")
+	assert_equals("jj file untrack 'tracked file.txt'", status.build_status_untrack_command(file_info))
 end)
 
 run_test("parses with left tee ├", function()
